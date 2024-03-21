@@ -1,0 +1,32 @@
+import matplotlib
+import matplotlib.pyplot as plt
+import geopandas as gpd
+import plotly.express as px
+import pandas as pd
+
+# Get built-in dataset from GeoPandas
+world_data = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+
+# Read the CSV file containing country data
+country = r"C:\Users\HP\Documents\danalytics projects\geopandas\country_geopandas.csv"
+count = pd.read_csv(country, sep=r'\s*,\s*', engine='python')
+
+# Using GeoPandas to convert latitude and longitude to points
+df_geop = gpd.GeoDataFrame(count, geometry=gpd.points_from_xy(count.latitude, count.longitude))
+
+# Get built-in dataset from GeoPandas
+wrld_dat = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+
+# Plot world map
+axis = world_data[world_data.continent == 'Africa'].plot(color='lightblue', edgecolor='black')
+
+# Plot points on the map
+df_geop.plot(ax=axis, color='black')
+
+# Add title to the plot
+plt.title('NW Attributes')
+
+# Save the plot as an image file
+fig = matplotlib.pyplot.gcf()
+fig.set_size_inches(9, 6)
+fig.savefig('matplot.png', dpi=200)
