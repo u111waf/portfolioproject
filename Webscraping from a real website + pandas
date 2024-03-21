@@ -1,0 +1,61 @@
+# Import the BeautifulSoup library for web scraping
+from bs4 import BeautifulSoup
+
+# Import the requests library to fetch the HTML content from a URL
+import requests
+
+# Fetch the HTML content from a URL and parse it using BeautifulSoup
+response = requests.get('https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population')
+soup = BeautifulSoup(response.text, 'html.parser')
+
+# Find the table in the parsed HTML content
+# This finds the first table in the HTML
+soup.find('table')
+
+# This finds the second table in the HTML
+soup.find_all('table')[1]
+
+# Find the table with a specific class
+soup.find('table', class_='wikitable sortable')
+
+# Assign the second table to a variable
+table = soup.find_all('table')[1]
+
+# Print the table to check its contents
+print(table)
+
+# Find all the table headers (th) within the table
+world_titles = table.find_all('th')
+
+# Extract the text from each table header and remove leading/trailing whitespace
+world_table_titles = [title.text.strip() for title in world_titles]
+
+# Print the extracted table titles
+print(world_table_titles)
+
+# Import the pandas library for data manipulation
+import pandas as pd
+
+# Create an empty DataFrame with columns named after the extracted table titles
+df = pd.DataFrame(columns=world_table_titles)
+
+# Find all rows (tr) within the table
+column_data = table.find_all('tr')
+
+# Iterate over each row in the table (excluding the header row)
+for row in column_data[1:]:
+    # Find all cells (td) within the row
+    row_data = row.find_all('td')
+    
+    # Extract the text from each cell and remove leading/trailing whitespace
+    individual_row_data = [data.text.strip() for data in row_data]
+    
+    # Print the extracted data for each row
+    print(individual_row_data)
+    
+    # Append the extracted row data to the DataFrame
+    length = len(df)
+    df.loc[length] = individual_row_data
+
+# Save the DataFrame to a CSV file
+df.to_csv(r'C:\Users\HP\Documents\danalytics projects\PYTHON\auto_file_sorter\filename.csv', index=False)
